@@ -1,8 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.http import FileResponse
 from datetime import datetime
 from perfil.models import Conta, Categoria
 from .models import Valores
+# from weasyprint import HTML
+from io import BytesIO
+import os
 
 
 def novo_valor(request):
@@ -75,3 +81,19 @@ def view_extrato(request):
     return render(request, 'view_extrato.html', {'valores': valores,
                                                  'contas': contas,
                                                  'categorias': categorias})
+
+
+def exportar_pdf(request):
+    valores = Valores.objects.filter(data__month=datetime.now().month)
+
+    path_template = os.path.join(settings.BASE_DIR, 'templates/partials/extrato.html')
+    template_render = render_to_string(path_template, {'valores': valores}, )
+
+    path_output = BytesIO() # salva os bytes em memória
+
+    # HTML(string=template_render).write_pdf(path_output)
+
+    path_output.seek(0) # volta o ponteiro para o inicio do arquivo
+
+    return FileResponse(path_output, filename="extrato.pdf") # retorna o arquivo com o nome
+

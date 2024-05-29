@@ -8,5 +8,7 @@ def calcula_total(objeto, campo):
     # mesma forma que de cima, só que mais enxuta
     total = objeto.aggregate(Sum(campo))[campo + '__sum']
 
+    if total == None: total = 0
+
     return total
 
