@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import datetime
-from perfil.utils import calcula_total
+from .utils import calcula_total
 
 
 class Categoria(models.Model):
